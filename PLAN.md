@@ -39,8 +39,15 @@ reordering entries or changing a label, is how the book's structure changes. The
 1. Reads the TOC's working copy and builds the reading chain: `cover → title → toc → TOC entries…`.
 2. Rewrites the navigation block at the top and bottom of every thread in the chain:
    `[[prev | ← Previous title]] · [[toc | Contents]] · [[next | Next title →]]`.
-3. Sets studio settings: `frontPage` = cover, `linksThreads` = the chain (the sidebar becomes a
-   live table of contents), plus theme, font, title and author from `book.json`.
+3. Sets studio settings: `frontPage` = cover, the two menus from `book.json` → `menu` (below),
+   and theme, font, title and author from `book.json`. Retargets the cover's "Start reading" link
+   to the first TOC entry.
+
+**Menus.** The studio has two: the masthead's *author links* (top of every page) and the
+*links section*. `menu.top` becomes the author links: book links only (Contents, Start reading →
+the first TOC entry, About). `menu.bottom` becomes the links section, set to `linksPosition:
+"bottom"`: the "Made with Blykker…" line, plus the studio's own "Find more blygs". Side effect:
+author links are part of `blyg.json`'s `author.links` on the wire, so they carry book links there too.
 4. Re-assembles notes, references and the index (below).
 5. Publishes only threads that were already published and whose text changed, with the note
    "Navigation updated". Drafts are edited but stay drafts.
@@ -109,11 +116,12 @@ check flags images missing rights or a print file.
 
 ### Phase 1 — config + editorial assistant (now)
 - [x] `book.json` format; New Nature instance (`Publishing/newnature/book.json`)
-- [x] `tools/blykker.py`: `seed`, `sync` (nav, TOC→links sidebar, settings, references, index), `--dry-run`
-- [ ] Chapter-level and book-level notes assembly with renumbering
-- [ ] Image record checks (rights, print file)
-- [ ] Title page, preface, about threads for New Nature; cover image
-- [ ] `sync` safety: refuse to touch a thread whose nav block was hand-edited (diff check), report instead
+- [x] `tools/blykker.py`: `seed` (incl. image upload), `sync` (nav, menus, settings, references, index), `--dry-run`, 429/network retry
+- [x] Chapter-level and book-level notes assembly with renumbering
+- [x] Image record checks (rights, source, print file): warnings
+- [x] Title page, preface, about threads for New Nature; cover image (composed: `newnature/scripts/make_cover.py`)
+- [x] Text an author types outside the nav markers is kept, not discarded
+- [ ] `sync` safety: report a hand-edited nav line instead of silently regenerating it
 - [ ] Trigger: run `sync` from a cron or a studio extension button instead of by hand
 
 ### Phase 2 — book presentation of the public site (needs client code)

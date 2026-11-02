@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>blykker book layout</title>
+<style>
+/* blykker phase-2 target: a book presentation of blyg public pages.
+   Palette = the custom theme applied by book.json (phase 1), so the two agree.
+   Fonts = blygger-studio's "book" stack: installed fonts only, no web fonts. */
+:root {
+  --page: #ece6da; --paper: #fbf8f1; --ink: #262321; --ink-soft: #6e665c;
+  --rule: #e2dacb; --accent: #8c3b2e;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Charter, Georgia, serif;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --measure: 34rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page: #1c1a17; --paper: #24211d; --ink: #e9e3d7; --ink-soft: #a89f92;
+    --rule: #3a352e; --accent: #d98b74;
+  }
+}
+:root[data-theme="dark"] {
+  --page: #1c1a17; --paper: #24211d; --ink: #e9e3d7; --ink-soft: #a89f92;
+  --rule: #3a352e; --accent: #d98b74;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--ink); font: 1.125rem/1.6 var(--serif); }
+a { color: inherit; text-decoration-color: var(--accent); text-underline-offset: .18em; }
+
+/* Design-sheet chrome: not part of the layout. */
+.sheet-head { font: .8rem/1.4 var(--sans); color: var(--ink-soft); max-width: 60rem; margin: 2rem auto 0; padding: 0 16px; }
+.sheet-head h1 { font-size: 1rem; margin: 0 0 .25rem; color: var(--ink); }
+.label { font: 600 .7rem/1 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft);
+  max-width: 60rem; margin: 3rem auto .75rem; padding: 0 16px; }
+
+/* A page of the book. */
+.page { background: var(--paper); max-width: 60rem; margin: 0 auto; padding: 3.5rem 16px 3rem;
+  border: 1px solid var(--rule); }
+.page > * { max-width: var(--measure); margin-left: auto; margin-right: auto; }
+
+/* Running head: book title left, section right. Replaces the blog masthead. */
+.running { display: flex; justify-content: space-between; font: .72rem/1 var(--sans);
+  letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft);
+  border-bottom: 1px solid var(--rule); padding-bottom: .6rem; margin-bottom: 3rem; }
+.running a { text-decoration: none; }
+
+/* Book nav: the generated [[prev]] · [[contents]] · [[next]] line, typeset as a footer. */
+.booknav { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: baseline;
+  font: .85rem/1.3 var(--sans); color: var(--ink-soft); border-top: 1px solid var(--rule);
+  padding-top: 1rem; margin-top: 3.5rem; }
+.booknav a { text-decoration: none; }
+.booknav a:hover { color: var(--accent); }
+.booknav .next { text-align: right; }
+.booknav small { display: block; font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; }
+
+/* Cover: full-bleed image area with the title set over it. */
+.cover { min-height: 34rem; display: grid; place-items: end start; padding: 0;
+  background: radial-gradient(120% 90% at 70% 20%, #c9b48f 0%, #8c6b47 40%, #3b2a1e 100%); color: #fbf8f1; }
+.cover-inner { padding: 3rem 2.5rem; max-width: none; margin: 0; }
+.cover h2 { font-weight: 400; font-size: clamp(2.6rem, 8vw, 4.75rem); line-height: 1; margin: 0 0 .75rem; letter-spacing: -.01em; }
+.cover p { margin: 0; font: .9rem/1.4 var(--sans); letter-spacing: .2em; text-transform: uppercase; }
+.cover .begin { display: inline-block; margin-top: 2rem; font: .85rem/1 var(--sans); letter-spacing: .08em;
+  border: 1px solid rgba(251,248,241,.6); padding: .7rem 1rem; text-decoration: none; }
+.cover .credit { font: .7rem/1 var(--sans); opacity: .7; margin-top: 2.5rem; letter-spacing: .04em; text-transform: none; }
+
+/* Contents. */
+.toc h2, .backmatter h2 { font-weight: 400; font-size: 1.9rem; text-align: center; margin: 1rem auto 2.5rem; }
+.toc ol { list-style: none; padding: 0; }
+.toc li { display: flex; gap: .75rem; align-items: baseline; padding: .45rem 0; }
+.toc li .n { font: .8rem/1 var(--sans); color: var(--ink-soft); width: 1.5rem; text-align: right; }
+.toc li a { text-decoration: none; }
+.toc li a:hover { color: var(--accent); }
+.toc li.group { margin-top: 1.4rem; font: .7rem/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+
+/* Chapter opener. */
+.opener { text-align: center; margin-top: 3rem; margin-bottom: 3rem; }
+.opener .num { font: .75rem/1 var(--sans); letter-spacing: .3em; text-transform: uppercase; color: var(--accent); }
+.opener h2 { font-weight: 400; font-size: 2.4rem; line-height: 1.15; margin: .9rem 0 0; }
+.opener hr { width: 3rem; border: 0; border-top: 1px solid var(--ink-soft); margin: 1.8rem auto 0; }
+.chapter p { margin: 0; text-indent: 1.5em; hyphens: auto; }
+.chapter p.first { text-indent: 0; }
+.chapter p.first::first-letter { float: left; font-size: 3.6em; line-height: .82; padding: .06em .08em 0 0; color: var(--accent); }
+.chapter p.first .sc { font-variant: small-caps; letter-spacing: .04em; }
+.chapter h3 { font-weight: 400; font-style: italic; font-size: 1.2rem; margin: 2rem 0 .6rem; }
+sup a { font: .68em/0 var(--sans); color: var(--accent); text-decoration: none; padding: 0 .1em; }
+.ref { text-decoration: underline dotted var(--ink-soft); }
+
+/* Figure: an image record fragment, with its credit line. */
+figure { margin: 2rem auto; }
+.plate { aspect-ratio: 3 / 2; background: repeating-linear-gradient(45deg, var(--rule) 0 2px, transparent 2px 12px); border: 1px solid var(--rule); }
+figcaption { font: .82rem/1.45 var(--sans); color: var(--ink-soft); margin-top: .6rem; }
+figcaption .credit { display: block; font-size: .72rem; margin-top: .2rem; }
+
+/* Chapter notes, references and index: small, hanging. */
+.notes { margin-top: 3rem; border-top: 1px solid var(--rule); padding-top: 1.2rem; font-size: .9rem; }
+.notes h4, .backmatter h4 { font: .7rem/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 1rem; }
+.notes ol { padding-left: 1.4rem; margin: 0; }
+.notes li { margin-bottom: .5rem; }
+.refs p { padding-left: 2em; text-indent: -2em; margin: 0 0 .8rem; font-size: .95rem; }
+.index { columns: 2 14rem; column-gap: 2.5rem; font-size: .95rem; }
+.index p { margin: 0 0 .35rem; padding-left: 1.2em; text-indent: -1.2em; break-inside: avoid; }
+.index .letter { font: 600 .75rem/1 var(--sans); letter-spacing: .14em; color: var(--accent); margin: 1rem 0 .4rem; text-indent: 0; }
+.index .pending { color: var(--ink-soft); font-style: italic; }
+
+.notes-col { font: .8rem/1.5 var(--sans); color: var(--ink-soft); max-width: 60rem; margin: .75rem auto 0; padding: 0 16px; }
+.notes-col code { font-size: .95em; }
+@media (max-width: 600px) {
+  .page { padding: 2rem 16px; }
+  .booknav { grid-template-columns: 1fr 1fr; }
+  .booknav .mid { display: none; }
+  .cover-inner { padding: 2rem 1.25rem; }
+}
+</style>
+</head>
+<body>
+
+<header class="sheet-head">
+  <h1>blykker — book layout for blyg public pages (phase 2 target)</h1>
+  Five page types: cover, contents, chapter, references, index. Each one is a vanilla blyg thread. Today's
+  studio renders them with the blog layout. This sheet shows what a book presentation would do with the same markup.
+</header>
+
+<div class="label">1 · Cover (the studio's static front page)</div>
+<section class="page cover">
+  <div class="cover-inner">
+    <h2>New Nature</h2>
+    <p>Venkatesh Rao</p>
+    <a class="begin" href="#contents">Begin reading →</a>
+    <p class="credit">Cover image: to come · rights and print file recorded in its image fragment</p>
+  </div>
+</section>
+<p class="notes-col">The cover thread holds the image and title. The studio's site masthead, feed links and sidebar are hidden on the front page.</p>
+
+<div class="label" id="contents">2 · Contents (the TOC thread, the source of truth for order)</div>
+<section class="page toc">
+  <div class="running"><a href="#">New Nature</a><span>Contents</span></div>
+  <h2>Contents</h2>
+  <ol>
+    <li class="group">Front matter</li>
+    <li><span class="n"></span><a href="#">Preface</a></li>
+    <li class="group">Chapters</li>
+    <li><span class="n">1</span><a href="#ch1">Introduction</a></li>
+    <li><span class="n">2</span><a href="#">…</a></li>
+    <li class="group">Back matter</li>
+    <li><span class="n"></span><a href="#refs">References</a></li>
+    <li><span class="n"></span><a href="#index">Index</a></li>
+  </ol>
+  <nav class="booknav"><span></span><span class="mid"></span>
+    <a class="next" href="#ch1"><small>Next</small>Chapter 1: Introduction →</a></nav>
+</section>
+<p class="notes-col">Group labels and chapter numbers come from the TOC's labels (<code>Chapter 1: Introduction</code> is split into number and title). The links sidebar keeps the same order, because <code>sync</code> sets <code>linksThreads</code> from this page.</p>
+
+<div class="label" id="ch1">3 · Chapter</div>
+<section class="page chapter">
+  <div class="running"><a href="#contents">New Nature</a><span>1 · Introduction</span></div>
+  <div class="opener">
+    <div class="num">Chapter One</div>
+    <h2>Introduction</h2>
+    <hr>
+  </div>
+  <p class="first"><span class="sc">Placeholder text</span> shows the typesetting, not the book. The opening paragraph
+    takes a drop cap and small capitals; later paragraphs are indented, not spaced, as in print. An endnote marker sits
+    here<sup><a href="#n1">1</a></sup>, and a reference is cited inline as <a class="ref" href="#refs">Rao 2026</a>.</p>
+  <p>Paragraphs set to a 34rem measure, with hyphenation on. Index terms like <em>hardness</em> are marked in the source
+    with an invisible line after the paragraph, so the reader never sees them; they turn up in the index with a link back
+    to this chapter.</p>
+  <figure>
+    <div class="plate" role="img" aria-label="Figure placeholder"></div>
+    <figcaption>Figure 1.1 — A caption from the image record fragment.
+      <span class="credit">Credit line · rights: CC BY 4.0 · print file: images/print/fig-1-1.tif</span></figcaption>
+  </figure>
+  <h3>A section heading</h3>
+  <p class="first" style="text-indent:0">After a heading, the first paragraph is not indented and has no drop cap.</p>
+  <aside class="notes" id="n1">
+    <h4>Notes</h4>
+    <ol><li>Chapter-level notes (<code>"notes": "chapter"</code>) are note fragments, transcluded here in citation order.
+      Book-level notes go in a Notes section before References.</li></ol>
+  </aside>
+  <nav class="booknav">
+    <a href="#contents"><small>Previous</small>← Contents</a>
+    <a class="mid" href="#contents">Contents</a>
+    <a class="next" href="#refs"><small>Next</small>References →</a>
+  </nav>
+</section>
+
+<div class="label" id="refs">4 · References</div>
+<section class="page backmatter refs">
+  <div class="running"><a href="#contents">New Nature</a><span>References</span></div>
+  <h2>References</h2>
+  <p>Rao, Venkatesh. “Constructing the Evil Twin of AI.” <em>Protocolized</em>, October 15, 2025.</p>
+  <p>Rao, Venkatesh. “Inventing New Nature.” <em>Protocolized</em>, May 12, 2026.</p>
+  <p>Rao, Venkatesh. “New Nature.” <em>Protocolized</em>, June 17, 2026.</p>
+  <p>Wulf, Andrea. <em>The Invention of Nature: Alexander von Humboldt’s New World</em>. New York: Knopf, 2015.</p>
+  <nav class="booknav">
+    <a href="#ch1"><small>Previous</small>← Chapter 1</a>
+    <a class="mid" href="#contents">Contents</a>
+    <a class="next" href="#index"><small>Next</small>Index →</a>
+  </nav>
+</section>
+<p class="notes-col">Each entry is a reference fragment transcluded with <code>![[id]]</code>. The studio's quote frame and provenance line are hidden here and shown on hover, so the page reads as a plain bibliography.</p>
+
+<div class="label" id="index">5 · Index</div>
+<section class="page backmatter">
+  <div class="running"><a href="#contents">New Nature</a><span>Index</span></div>
+  <h2>Index</h2>
+  <div class="index">
+    <p class="letter">H</p>
+    <p>hardness, <a href="#ch1">1</a></p>
+    <p class="letter">I</p>
+    <p>immutability, <span class="pending">no locators yet</span></p>
+  </div>
+  <nav class="booknav">
+    <a href="#refs"><small>Previous</small>← References</a>
+    <a class="mid" href="#contents">Contents</a>
+    <span></span>
+  </nav>
+</section>
+<p class="notes-col" style="margin-bottom:3rem">On the web, locators are chapter numbers that link to the chapter. Page numbers come with the print export (phase 3).</p>
+
+</body>
+</html>

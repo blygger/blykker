@@ -1,11 +1,10 @@
 # blykker
 
-A book-shaped client for the [Blygger protocol](https://github.com/blygger/blygger-spec): a fork of
-[blygger-studio](https://github.com/blygger/blygger-studio) customized for blygs that are books —
+Book-shaped blygs for the [Blygger protocol](https://github.com/blygger/blygger-spec), built on
+[blygger-studio](https://github.com/blygger/blygger-studio): config and tooling first, a fork only if needed —
 chapters, ordering, a table of contents, long-form revision, and manuscript export.
 
-**Status: not started.** Requirements are being gathered while a first book is written on the
-vanilla studio at [newnature.venkateshrao.com](https://newnature.venkateshrao.com/). Code arrives
-when there is enough learned to fork with.
+**Status: phase 1.** A `book.json` config plus an editorial-assistant script that drives a vanilla studio node; see [PLAN.md](PLAN.md). First book: the
+New Nature blyg at [newnature.venkateshrao.com](https://newnature.venkateshrao.com/).
 
-MIT licensed, like the studio it will fork.
+MIT licensed, like the studio.

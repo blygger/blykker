@@ -6,11 +6,22 @@
 blykker is the **book-specific blyg client**: a planned fork of [`../blygger-studio/`](../blygger-studio/)
 customized for book-like blygs. Created 2026-11-02. Public repo `blygger/blykker` (branch `main`, MIT).
 
-## State: dormant — do not build yet
+## State: phase 1 — config + editorial assistant (started 2026-11-02)
 
-Venkat's instruction at creation: **don't do anything here until the book is further along.**
-No fork, no code, no deploys until Venkat says to start. Sessions in other projects may read this
-repo; they don't write to it except to keep this file and `status.md` accurate.
+Venkat started blykker on 2026-11-02 with a book-blyg design. **Read [`PLAN.md`](PLAN.md) first**:
+the book model, the invisible-marker conventions, and the phased backlog. Phase 1 adds **no studio
+code**. blykker is a config format (`book.json`, instance in `Publishing/newnature/`) plus
+`tools/blykker.py`, which edits threads and settings through the owner API as an editor would.
+
+| Path | What |
+|---|---|
+| `PLAN.md` | Book model, conventions, backlog (phases 1–3), open questions |
+| `tools/blykker.py` | `seed` (create sections + reference fragments) and `sync` (TOC → nav blocks, links sidebar, settings, references, index; `--dry-run`) |
+| `design/book-layout.html` | Phase-2 target layout for public pages (cover, contents, chapter, references, index) |
+
+Run against a book: `tools/blykker.py ../../Publishing/newnature/book.json sync --dry-run`.
+`sync` publishes threads that were already published and changed. **That is outward-facing**, so
+run it without `--dry-run` only when Venkat says so.
 
 ## First user and requirements source: the New Nature book
 
@@ -20,9 +31,9 @@ repo; they don't write to it except to keep this file and `status.md` accurate.
 | Live blyg (vanilla studio for now) | https://newnature.venkateshrao.com/ — deployment in `Publishing/newnature/blyg.md` |
 | Requirements log | `Publishing/newnature/blykker-notes.md` — friction and ideas gathered while writing |
 
-When blykker starts: read `blykker-notes.md` first, fork from a tagged studio release (the blyg
-runs 0.50.0 today), and plan to move the `newnature` deployment env from the studio's private
-config into blykker's own. The first chapter of the book is the planned first real test.
+If phase 2 needs a fork: read `blykker-notes.md` first, fork from a tagged studio release (the blyg
+runs 0.50.0 today), and move the `newnature` deployment env from the studio's private config into
+blykker's own. Prefer proposing a theming hook upstream first (PLAN.md, phase 2).
 
 ## Rules inherited from the studio (apply once code exists)
 
@@ -42,6 +53,6 @@ config into blykker's own. The first chapter of the book is the planned first re
 **Ritual config**
 - **Log:** `status.md`. (The program-wide DEVLOG stays in `../blygger-spec/`; add an entry there only when blykker work is part of a numbered blygger session.)
 - **Startup extras (S5):** skim new items in `Publishing/newnature/blykker-notes.md`.
-- **Verification (W2):** n/a while dormant; once code exists, the studio's test suites and a look at the live blyg.
+- **Verification (W2):** `sync --dry-run` against newnature, then look at the live blyg pages it changed.
 - **Deploy policy:** only if Venkat says so.
 - **Carry-overs (S6):** none

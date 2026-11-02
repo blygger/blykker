@@ -6,3 +6,4 @@ node_modules/
 .DS_Store
 wrangler.private.jsonc
 deploy-targets.json
+__pycache__/

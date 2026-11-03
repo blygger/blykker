@@ -32,6 +32,20 @@ request to Blygger Studio**, so the feature can stay a mod. The goal is never to
 blykker the first test case for a **mods model** for the studio: a real, demanding use that shows
 which surfaces a mod needs.
 
+## Quick start
+
+[`book.template.json`](book.template.json) is the starting point. It says where to get Blygger
+Studio (its [latest release](https://github.com/blygger/blygger-studio/releases/latest) and
+[install guide](https://github.com/blygger/blygger-studio#install-the-worker-download)), lists the
+setup steps in order, and holds the configuration that makes a fresh blyg look like the pilot book:
+cover as the front page, title page, Contents, Preface, Chapter 1, References, Index and About; a
+book palette and typeface; book links in the top menu. In short:
+
+1. Install stock Blygger Studio on a subdomain of its own.
+2. Copy `book.template.json` to `book.json` and fill in the `CHANGE-ME` values.
+3. Run `tools/blykker.py book.json seed` (Python 3, standard library only).
+4. Write in the studio. After editing Contents, run `tools/blykker.py book.json sync`.
+
 ## Pilot: *New Nature*
 
 blykker is being bootstrapped by writing a real book with it. *New Nature: How artificial

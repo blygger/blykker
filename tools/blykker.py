@@ -95,7 +95,10 @@ class Blyg:
 
 
 def load_book(path: Path):
-    book = json.loads(path.read_text("utf-8"))
+    raw = path.read_text("utf-8")
+    if "CHANGE-ME" in raw:
+        sys.exit(f"{path} still has CHANGE-ME values; fill them in first (see its `setup` list)")
+    book = json.loads(raw)
     pw_file = (path.parent / book["password"]["file"]).resolve()
     var = book["password"]["var"] + "="
     pw = next((l[len(var):].strip() for l in pw_file.read_text().splitlines() if l.startswith(var)), "")

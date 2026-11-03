@@ -19,6 +19,7 @@ code**. blykker is a config format (`book.json`, instance in `Publishing/newnatu
 
 | Path | What |
 |---|---|
+| `book.template.json` | **Starting point for users**: where to get the studio, setup steps, and the book config modelled on New Nature (CHANGE-ME placeholders; the tool refuses to run until they are filled). Keep it in step with `Publishing/newnature/book.json` when the format changes. |
 | `PLAN.md` | Book model, conventions, backlog (phases 1–3), open questions |
 | `tools/blykker.py` | `seed` (create sections, reference fragments, cover image) and `sync` (Contents → nav, menus, settings, notes, references, index, cover link; `--dry-run`) |
 | `design/book-layout.html` | Phase-2 target layout for public pages (cover, contents, chapter, references, index) |

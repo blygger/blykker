@@ -1,0 +1,108 @@
+{
+  "$format": "blykker book config v0 — see PLAN.md. Copy this file next to your book's files as book.json, fill in the CHANGE-ME values, then follow `setup` in order.",
+
+  "studio": {
+    "what": "blykker is a configuration-first mod of Blygger Studio, not a separate client. You run stock Blygger Studio and apply this config to it.",
+    "repo": "https://github.com/blygger/blygger-studio",
+    "releases": "https://github.com/blygger/blygger-studio/releases/latest",
+    "download": "blygger-worker-VERSION.tar.gz and SHA256SUMS from the release",
+    "install_guide": "https://github.com/blygger/blygger-studio#install-the-worker-download",
+    "tested_with": "0.50.0",
+    "recommended_mount": "a subdomain of its own, MOUNT \"\" (e.g. book.example.com)"
+  },
+
+  "setup": [
+    "1. Install Blygger Studio from the latest release, following install_guide: create the D1 database and R2 bucket, set name/account/database/bucket in wrangler.jsonc, route a subdomain with { \"pattern\": \"book.example.com\", \"custom_domain\": true } and MOUNT \"\", apply migrations, set OWNER_PASSWORD and COOKIE_SECRET, deploy.",
+    "2. Optional, for AI-assisted writing ([TK] generation, changelog notes): set AI_PROVIDER_KEY (Anthropic) with `wrangler secret put`, and keep the aiModel* settings below.",
+    "3. Sign in once at https://book.example.com/studio to check the password works. You don't need to change any settings by hand, because step 6 applies them.",
+    "4. Copy this file to your book's folder as book.json. Set `blyg` to your blyg's URL, and point `password.file`/`password.var` at a local, gitignored .env line holding OWNER_PASSWORD.",
+    "5. Fill in every CHANGE-ME: title, subtitle, author, settings.siteTitle/authorName/authorUrl/authorBio, the title page and about seeds. Optional: a cover image (sections.cover.image.file, a portrait JPEG with the title set into it).",
+    "6. Run `tools/blykker.py book.json seed`. It creates and publishes the cover, title page, Contents, Preface, Chapter 1, References, Index and About, writes their ids back into this file, and then runs sync.",
+    "7. Write in the studio. After changing Contents (adding, removing or reordering sections), run `tools/blykker.py book.json sync` (try --dry-run first). It rebuilds navigation, menus, notes, references, index and the cover's Start reading link.",
+    "Conventions for notes, references, index terms and images: PLAN.md, 'Invisible markers'. A worked example is the pilot book's AUTHORING guide."
+  ],
+
+  "blyg": "https://CHANGE-ME.example.com",
+  "password": { "file": ".env", "var": "OWNER_PASSWORD" },
+
+  "title": "CHANGE-ME Book Title",
+  "subtitle": "CHANGE-ME subtitle",
+  "author": "CHANGE-ME Author Name",
+  "notes": "chapter",
+
+  "settings": {
+    "siteTitle": "CHANGE-ME Book Title",
+    "authorName": "CHANGE-ME Author Name",
+    "authorUrl": "https://CHANGE-ME.example.com",
+    "authorBio": "CHANGE-ME one-line author bio",
+    "font": "book",
+    "theme": "custom",
+    "customThemeName": "Book",
+    "customTheme": {
+      "dark": false,
+      "page": "#ece6da", "paper": "#fbf8f1",
+      "ink": "#262321", "inkSoft": "#6e665c", "rule": "#e2dacb", "pencil": "#8c3b2e",
+      "genBg": "#f3ecdf", "genRule": "#dccbb0"
+    },
+    "linksPosition": "bottom",
+    "linksBlyggerOrg": false,
+    "linksBlyggerCom": true,
+    "aiModel": "claude-sonnet-5-5",
+    "aiModelTk": "claude-sonnet-5-5",
+    "aiModelChangelog": "claude-haiku-4-5"
+  },
+
+  "menu": {
+    "top": [
+      { "label": "Contents", "section": "toc" },
+      { "label": "Start reading", "section": "@first" },
+      { "label": "About", "section": "about" }
+    ],
+    "bottom": [
+      { "label": "Made with Blykker, a book mod for Blygger Studio", "url": "https://github.com/blygger/blykker" }
+    ]
+  },
+
+  "sections": {
+    "cover": {
+      "role": "cover", "title": "Cover", "id": null,
+      "seed": "*CHANGE-ME subtitle*\n\n[[{toc} | Contents]] · [[{preface} | Start reading →]]",
+      "$image": "To use a cover image, rename $image to image, set file and alt below, and put ![alt]({image}) as the first line of seed.",
+      "$image_example": { "file": "images/cover/book-cover-web-1600x1850.jpg", "alt": "CHANGE-ME Book Title, by CHANGE-ME Author Name" }
+    },
+    "title": {
+      "role": "title", "title": "Title page", "id": null,
+      "seed": "# CHANGE-ME Book Title\n\n*CHANGE-ME subtitle*\n\n**CHANGE-ME Author Name**\n\nOnline edition, in progress"
+    },
+    "toc": {
+      "role": "toc", "title": "Contents", "id": null,
+      "seed": "# Contents\n\n- [[{preface} | Preface]]\n- [[{ch1} | Chapter 1: Introduction]]\n- [[{references} | References]]\n- [[{index} | Index]]"
+    },
+    "preface": {
+      "role": "preface", "title": "Preface", "id": null,
+      "seed": "# Preface\n\n*To come.*"
+    },
+    "ch1": {
+      "role": "chapter", "title": "Chapter 1: Introduction", "id": null,
+      "seed": "# Chapter 1: Introduction\n\n*Draft in progress.*"
+    },
+    "references": {
+      "role": "references", "title": "References", "id": null,
+      "seed": "# References"
+    },
+    "index": {
+      "role": "index", "title": "Index", "id": null,
+      "seed": "# Index"
+    },
+    "about": {
+      "role": "about", "title": "About the author", "id": null,
+      "seed": "# About the author\n\nCHANGE-ME author biography."
+    }
+  },
+
+  "references": [],
+
+  "index": {
+    "terms": []
+  }
+}

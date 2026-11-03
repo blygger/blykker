@@ -55,6 +55,11 @@ up the hook in PLAN.md → *Upstream hooks* and propose it as a blygger-studio P
 
 ## Session rituals
 
+**Governance** (Venkat, 2026-11-03): blykker is not a management point of the `blygger-protocol/`
+folder. It is co-managed by the New Nature book project and the blygger program initially, and starts
+to evolve semi-independently once the program has ruled the mechanism for studio mods (Fable queue
+item 22 in `../blygger-spec/docs/fable-round-queue.md`, which uses blykker's upstream hooks as evidence).
+
 **Run from `Publishing/newnature/` for now** (Venkat, 2026-11-02). blykker is controlled from its pilot
 book's sessions, which run the full base ritual for both repos and keep one devlog
 (`Publishing/newnature/DEVLOG.md`). When blykker is managed on its own, give it its own snippet,

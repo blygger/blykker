@@ -59,7 +59,7 @@
       { "label": "About", "section": "about" }
     ],
     "bottom": [
-      { "label": "Made with Blykker, a book mod for Blygger Studio", "url": "https://github.com/blygger/blykker" }
+      { "label": "Made with Blykker, a configuration and mod for the studio client that makes it suitable for a book blyg, or blyk", "url": "https://github.com/blygger/blykker" }
     ]
   },
 

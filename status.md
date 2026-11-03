@@ -12,3 +12,4 @@
 - 2026-11-02 15:15 PST — wrap-up. README rewritten (intent; New Nature as pilot). Tool live-verified against newnature (dry-run clean). Next: phase 1 backlog items in PLAN.md as the book needs them.
 - 2026-11-02 — Reframed (Venkat): blykker is a configuration-first mod of blygger-studio, not an independent client; features as mods, missing surfaces proposed as studio PRs; first test case for a mods model. README, PLAN (new *Upstream hooks* table), CLAUDE.md updated.
 - 2026-11-02 — `book.template.json`: user starting point (studio release + install links, ordered setup steps, New Nature-style config with CHANGE-ME placeholders). Seed tested end to end on a fake node (publish order, menus, cover link, idempotent re-sync). Tool refuses configs with CHANGE-ME left. README Quick start added.
+- 2026-11-02 19:14 PST — Session 1 closed (logged in `Publishing/newnature/DEVLOG.md`). blykker is run from newnature's sessions until it is managed on its own.

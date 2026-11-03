@@ -55,11 +55,15 @@ up the hook in PLAN.md → *Upstream hooks* and propose it as a blygger-studio P
 
 ## Session rituals
 
+**Run from `Publishing/newnature/` for now** (Venkat, 2026-11-02). blykker is controlled from its pilot
+book's sessions, which run the full base ritual for both repos and keep one devlog
+(`Publishing/newnature/DEVLOG.md`). When blykker is managed on its own, give it its own snippet,
+devlog and session numbering.
+
 **Base:** [`Code/devops/rituals.md`](../../devops/rituals.md) — v1.1.
 
 **Ritual config**
-- **Log:** `status.md`. (The program-wide DEVLOG stays in `../blygger-spec/`; add an entry there only when blykker work is part of a numbered blygger session.)
-- **Startup extras (S5):** skim new items in `Publishing/newnature/blykker-notes.md`.
-- **Verification (W2):** `sync --dry-run` against newnature, then look at the live blyg pages it changed.
-- **Deploy policy:** only if Venkat says so.
-- **Carry-overs (S6):** none
+- **Log:** `Publishing/newnature/DEVLOG.md` (session entries); `status.md` here gets one-line state notes.
+- **Overrides:** S1–W7: run from `Publishing/newnature`'s sessions, not here, because blykker has no
+  independent sessions yet and one log avoids two half-logs. W4: the dated entry goes in newnature's
+  DEVLOG, with a one-line note in `status.md` here.

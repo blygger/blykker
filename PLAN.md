@@ -1,11 +1,18 @@
 # blykker — plan and backlog
 
-blykker makes a blyg read like a book. **Phase 1 is a configuration file plus an editorial
-assistant**: a `book.json` that describes a book, and a script (`tools/blykker.py`) that acts on a
-vanilla blygger-studio node through its owner API, the way an author or editor would. It adds no
-code to the studio. If phase 1 is enough, blykker stays a config format and a tool. It becomes a
-client fork only for things the studio cannot do from outside: public-page presentation (phase 2),
-then exports (phase 3).
+blykker makes a blyg read like a book. It is a **configuration-first mod of Blygger Studio, not an
+independent client** (Venkat, 2026-11-02). It is the first test case for a mods model for the studio.
+
+- **Config first.** Phase 1 is a `book.json` that sets up a vanilla studio blyg for book use, plus
+  a tool (`tools/blykker.py`) that acts on the node through its owner API, as an author or editor
+  would. No studio code.
+- **Then mods.** Book features are added as mods on the studio's existing extension surfaces
+  (compiled-in extensions: studio pages, reading-view slots, owner reads, feed orders). See
+  blygger-studio `docs/extensions.md`.
+- **Hooks go upstream.** When a feature needs a surface the studio lacks (public-page theming, a
+  book layout, presentation-level nav, export routes), blykker opens a **PR to blygger-studio** for
+  a general hook, so the feature stays a mod. Forking is not on the plan. Each hook request is
+  logged in *Upstream hooks* below, because they are the evidence the mods model is built from.
 
 First book: *New Nature* (`Code/Publishing/newnature/`, blyg at newnature.venkateshrao.com).
 
@@ -128,7 +135,7 @@ check flags images missing rights or a print file.
 
 Feature requests from the pilot book are collected in `Publishing/newnature/blykker-notes.md` → *Feature to-do*.
 
-### Phase 2 — book presentation of the public site (needs client code)
+### Phase 2 — book presentation of the public site (needs an upstream hook)
 Possible by config today: custom theme colours, the "book" font stack, links sidebar as TOC,
 static front page. Not possible without code: typography and layout. The target design is
 `design/book-layout.html`:
@@ -138,14 +145,29 @@ static front page. Not possible without code: typography and layout. The target 
 - notes and references typeset small, hanging indents; index in two columns
 - hide feed-era apparatus on book threads (dates, changelog line) or move it to a colophon
 - Then: presentation-level nav that can point at pinned versions (removes the circularity above)
-Route: propose a theming hook upstream (custom CSS or "book mode") to blygger-studio first; fork
-only if that is refused or too slow.
+Route: a PR to blygger-studio for a public-page presentation hook (e.g. operator CSS, or an
+extension slot that can restyle public pages for chosen threads), then the book layout as a blykker
+mod on that hook. Today extensions are studio-only by design ("The wire" and "Other screens" in
+`docs/extensions.md`), so this is a real change of studio policy and goes through review there.
 
 ### Phase 3 — production outputs
 - [ ] EPUB from the chain (pinned edition), notes per config, index with anchors
 - [ ] Print manuscript: .docx for the Publishing pipeline (editor → Vellum), print-resolution images
 - [ ] Pinned editions: cut "edition 1" as a TOC of pinned versions; colophon with version list
 - [ ] Register the book in `Publishing/vgr-books/registry.json` at beta
+
+## Upstream hooks (PRs to blygger-studio)
+
+The surfaces blykker needs and the studio lacks. Each is proposed as a general hook, not a book
+feature. Status: *idea* → *proposed* (issue/PR link) → *merged* / *declined*.
+
+| Hook | Needed for | Status |
+|---|---|---|
+| Public-page presentation for chosen threads (CSS or an extension slot) | Phase 2 book layout | idea |
+| A custom label for a thread in the links section | "Start reading" without an external link | idea |
+| Hide or restyle feed apparatus (version line, changelog note, dates) per thread | Book pages that read like pages | idea |
+| Feed order or filter that can leave out fragments carrying a marker | Keep notes and references out of Posts | idea (an extension feed order can already reorder; filtering is the gap) |
+| Write-capable extension action, or a server hook on publish | Rebuild nav when Contents change, without an outside watcher | idea |
 
 ## Open questions
 - Does publishing a nav-only change deserve a new public version every time? It adds changelog

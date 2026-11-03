@@ -1,10 +1,14 @@
 # blykker — Project Instructions
 
 > **Environment rules, keys & safety policies:** see [`Code/CLAUDE.md`](../../CLAUDE.md) and the `devops/` warnings files.
-> **The protocol lives elsewhere:** [`../blygger-spec/`](../blygger-spec/). blykker is a client, not where protocol decisions get made.
+> **The protocol lives elsewhere:** [`../blygger-spec/`](../blygger-spec/). blykker is a mod of the studio, not where protocol decisions get made.
 
-blykker is the **book-specific blyg client**: a planned fork of [`../blygger-studio/`](../blygger-studio/)
-customized for book-like blygs. Created 2026-11-02. Public repo `blygger/blykker` (branch `main`, MIT).
+blykker is a **configuration-first mod of [`../blygger-studio/`](../blygger-studio/) for book-like
+blygs, not an independent client** (reframed by Venkat 2026-11-02). It starts as a config file
+(`book.json`) plus a tool that sets up and maintains a vanilla studio blyg as a book. Features come
+later as mods on studio surfaces, and missing surfaces are proposed upstream as PRs to
+blygger-studio, so blykker never forks. It is the first test case for a studio mods model. Created
+2026-11-02. Public repo `blygger/blykker` (branch `main`, MIT).
 
 ## State: phase 1 — config + editorial assistant (started 2026-11-02)
 
@@ -16,7 +20,7 @@ code**. blykker is a config format (`book.json`, instance in `Publishing/newnatu
 | Path | What |
 |---|---|
 | `PLAN.md` | Book model, conventions, backlog (phases 1–3), open questions |
-| `tools/blykker.py` | `seed` (create sections + reference fragments) and `sync` (TOC → nav blocks, links sidebar, settings, references, index; `--dry-run`) |
+| `tools/blykker.py` | `seed` (create sections, reference fragments, cover image) and `sync` (Contents → nav, menus, settings, notes, references, index, cover link; `--dry-run`) |
 | `design/book-layout.html` | Phase-2 target layout for public pages (cover, contents, chapter, references, index) |
 
 Run against a book: `tools/blykker.py ../../Publishing/newnature/book.json sync --dry-run`.
@@ -31,19 +35,21 @@ run it without `--dry-run` only when Venkat says so.
 | Live blyg (vanilla studio for now) | https://newnature.venkateshrao.com/ — deployment in `Publishing/newnature/blyg.md` |
 | Requirements log | `Publishing/newnature/blykker-notes.md` — friction and ideas gathered while writing |
 
-If phase 2 needs a fork: read `blykker-notes.md` first, fork from a tagged studio release (the blyg
-runs 0.50.0 today), and move the `newnature` deployment env from the studio's private config into
-blykker's own. Prefer proposing a theming hook upstream first (PLAN.md, phase 2).
+The pilot blyg stays on stock blygger-studio, deployed from the studio repo's private config. When a
+mod needs code, it is a studio extension compiled in via the studio's gitignored
+`extensions.local.json`, and its source lives here. When the studio has no surface for it, write
+up the hook in PLAN.md → *Upstream hooks* and propose it as a blygger-studio PR. Do not fork.
 
-## Rules inherited from the studio (apply once code exists)
+## Rules inherited from the studio (apply once mod code exists)
 
 - **Model routing applies.** Anything touching protocol semantics, cross-client invariants,
-  security/crypto or API-surface design is ⚠️ FABLE (see `../blygger-spec/CLAUDE.md`) — book
-  features must be client-side or extensions, not protocol changes made here.
-- **Client version ≠ protocol version.** blykker gets its own `CLIENT` name/version; don't reuse
-  `blygger-studio`'s generator string.
-- **Deploy config is not committed** (studio session 28 pattern): `wrangler.private.jsonc` and
-  `deploy-targets.json` are gitignored here too.
+  security/crypto or API-surface design is ⚠️ FABLE (see `../blygger-spec/CLAUDE.md`). Book
+  features are mods, never protocol changes. An upstream hook PR that widens the studio's
+  extension surface or `/api` is API-surface design: flag it as FABLE.
+- **The generator stays `blygger-studio/x.y.z`.** A mod doesn't rename the client. Mod identity, if
+  needed, goes in the studio's extension metadata.
+- **Extension rules apply** (`../blygger-studio/docs/extensions.md`): own directory, prefixed CSS,
+  imports only from the extension surface, reads-only server routes.
 - Node, npm and Dropbox `node_modules` policy: `Code/devops/warnings-node.md`.
 
 ## Session rituals

@@ -1,8 +1,9 @@
 # blykker
 
-**Book-shaped blygs.** blykker is for writing and publishing books on the
-[Blygger protocol](https://github.com/blygger/blygger-spec), built on
-[Blygger Studio](https://github.com/blygger/blygger-studio).
+**Book-shaped blygs, as a mod of [Blygger Studio](https://github.com/blygger/blygger-studio).**
+blykker is not a separate client. It is a configuration-first mod that sets up a vanilla studio
+blyg for writing and publishing books on the [Blygger protocol](https://github.com/blygger/blygger-spec),
+and adds book features over time as further mods.
 
 ## Intent
 
@@ -12,30 +13,37 @@ index, and eventually an EPUB and a print manuscript. blykker joins the two. You
 living blyg, with every section a thread and every note, reference and image record a fragment,
 and the book's structure keeps itself in order as you work.
 
-The idea is to stay as close to a vanilla blyg as possible:
-
 - **The table of contents is the book.** Edit the Contents thread to add, remove or reorder
   sections, and navigation, menus and the cover's "Start reading" link follow.
 - **Use the protocol's own link grammar for everything.** Navigation, citations, notes and
   references are ordinary `[[id | text]]` links and `![[id]]` transclusions. Any blygger client can
   read a blykker book.
-- **Configuration first, code later.** blykker may turn out to be mostly a config file (`book.json`)
-  plus an editorial assistant that acts on a standard studio node through its owner API. It forks
-  the client only for what can't be done from outside: book typography for the public site, then
-  EPUB and print exports.
+
+## A mod, not a fork
+
+blykker starts as **a config file**: a `book.json` that turns a vanilla studio blyg into a book,
+applied by a small tool that uses the studio's own owner API, as an author or editor would. Book
+features are then added as **mods**, starting from what the studio already lets a node add (its
+compiled-in extensions and their slots).
+
+When a book feature needs a hook the studio doesn't have yet, such as public-page theming, a
+"book mode" layout, or a place for a navigation surface, blykker proposes it **upstream as a pull
+request to Blygger Studio**, so the feature can stay a mod. The goal is never to fork. That makes
+blykker the first test case for a **mods model** for the studio: a real, demanding use that shows
+which surfaces a mod needs.
 
 ## Pilot: *New Nature*
 
 blykker is being bootstrapped by writing a real book with it. *New Nature: How artificial
 intelligence and computational hardness are rewilding the planet* by Venkatesh Rao is written in
-public at [newnature.venkateshrao.com](https://newnature.venkateshrao.com/). Whatever that book
-needs, blykker builds, and whatever gets in its way becomes the backlog. The book comes first, and
-blykker is shaped by what turns out to matter in practice.
+public at [newnature.venkateshrao.com](https://newnature.venkateshrao.com/), on stock Blygger
+Studio plus blykker's config. Whatever that book needs, blykker builds, and whatever gets in its
+way becomes the backlog: either a new mod, or a hook to propose upstream.
 
 ## Status
 
-Phase 1: a `book.json` format and `tools/blykker.py` (`seed`, `sync`) running against the pilot
-book's blyg on stock Blygger Studio. The plan, conventions and backlog are in [PLAN.md](PLAN.md),
-and the target book layout is in [design/book-layout.html](design/book-layout.html).
+Config stage: the `book.json` format and `tools/blykker.py` (`seed`, `sync`), running against the
+pilot book's blyg. The plan, conventions and backlog are in [PLAN.md](PLAN.md), and the target book
+layout is in [design/book-layout.html](design/book-layout.html).
 
 MIT licensed, like Blygger Studio.

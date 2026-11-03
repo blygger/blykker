@@ -122,7 +122,11 @@ check flags images missing rights or a print file.
 - [x] Title page, preface, about threads for New Nature; cover image (composed: `newnature/scripts/make_cover.py`)
 - [x] Text an author types outside the nav markers is kept, not discarded
 - [ ] `sync` safety: report a hand-edited nav line instead of silently regenerating it
-- [ ] Trigger: run `sync` from a cron or a studio extension button instead of by hand
+- [ ] Trigger: run `sync` from a cron or a studio extension button instead of by hand (pilot request; see below)
+- [ ] Manuscript statistics: words per chapter and total, notes, references, index, images (`blykker.py stats`, then studio-side)
+- [ ] Composition start page: private, Contents-ordered list of sections with edit links (studio extension page)
+
+Feature requests from the pilot book are collected in `Publishing/newnature/blykker-notes.md` → *Feature to-do*.
 
 ### Phase 2 — book presentation of the public site (needs client code)
 Possible by config today: custom theme colours, the "book" font stack, links sidebar as TOC,

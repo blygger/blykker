@@ -56,9 +56,16 @@ up the hook in PLAN.md → *Upstream hooks* and propose it as a blygger-studio P
 ## Session rituals
 
 **Governance** (Venkat, 2026-11-03): blykker is not a management point of the `blygger-protocol/`
-folder. It is co-managed by the New Nature book project and the blygger program initially, and starts
-to evolve semi-independently once the program has ruled the mechanism for studio mods (Fable queue
-item 22 in `../blygger-spec/docs/fable-round-queue.md`, which uses blykker's upstream hooks as evidence).
+folder. It is co-managed by the New Nature book project and the blygger program initially, and may
+now evolve semi-independently: the program ruled the mechanism for studio mods the same day
+(decision #89 in `../blygger-spec/CLAUDE.md`, reasoning `../blygger-spec/docs/v0.4-plan.md` §17.1;
+principles to come as `../blygger-studio/docs/mods.md`). The ruling's consequences for
+`PLAN.md` § Upstream hooks: public-page presentation, the custom links label and per-thread hiding
+of feed apparatus are accepted in their general forms (an owner stylesheet or page-template
+setting; a setting; presentation); the `feed.xml` filter is **refused** (§7: one event per published
+item) — keep notes and references off the home page through the feed-order slot instead, and leave
+burying to readers (§13.7); the server hook on publish is **refused** — rebuild from a tool on a
+scoped token polling `/api/changes`, which is what `tools/blykker.py` already is.
 
 **Run from `Publishing/newnature/` for now** (Venkat, 2026-11-02). blykker is controlled from its pilot
 book's sessions, which run the full base ritual for both repos and keep one devlog

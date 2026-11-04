@@ -153,8 +153,183 @@ mod on that hook. Today extensions are studio-only by design ("The wire" and "Ot
 ### Phase 3 — production outputs
 - [ ] EPUB from the chain (pinned edition), notes per config, index with anchors
 - [ ] Print manuscript: .docx for the Publishing pipeline (editor → Vellum), print-resolution images
-- [ ] Pinned editions: cut "edition 1" as a TOC of pinned versions; colophon with version list
+- [ ] Pinned editions: cut "edition 1" as a TOC of pinned versions; colophon with version list (see *Editions* below)
+- [ ] Word counts per edition: word-count extension v2 (see *Editions* below)
+- [ ] Project dashboard: how far drafting is ahead of published, and published ahead of the stable edition
 - [ ] Register the book in `Publishing/vgr-books/registry.json` at beta
+
+## Editions (planned 2026-11-04, not built)
+
+A book on a blyg has editions the way software has releases. Planned, not designed in detail.
+Editions are **per book**: on a blyg with several books (see *Several books on one blyg*), each book is cut,
+numbered and pinned on its own schedule.
+
+| Edition | What it is | How a reader reaches it |
+|---|---|---|
+| **Bleeding edge** | The live book: every section at its current published version. `[[id]]` links already resolve here. | The blyg as it is today |
+| **Newest stable** | The book's most recently cut edition: a fixed set of pinned versions | A "Stable edition" link on the book's cover and Contents, which blykker retargets on each cut. Not the global menu, which is shared by every book on the blyg. |
+| **Older editions** | Every earlier cut. Pins are permanent public references (spec §2.8), so an old edition never stops resolving. | An editions list (colophon or an Editions thread) |
+
+The author also has a **draft** state ahead of the bleeding edge: unpublished edits in working
+copies. The draft is never public. It appears only in the Studio and the project dashboard.
+
+### Cutting an edition (`blykker.py cut-edition`, sketch)
+
+1. **Check.** Every section in the Contents outline is published with no unpublished edits, unless the cut is told to ignore drafts.
+2. **Pin.** Pin each section's current published version, and the Contents' own (`PUT /api/items/{id}/versions/{v}/pin`).
+3. **Manifest.** Write an **edition manifest** thread ("Edition 2 · 2027-03-01"). Its outline lists each section's pinned
+   version, and its colophon gives the version list and word counts. Publish it and pin it.
+4. **Record.** Add the edition to the book's config → `editions` (number, date, manifest id and version, section pins).
+   Retarget the book's "Stable edition" link.
+
+**The open problem: links to a version.** The bracket grammar has no versioned link: `![[id@vN]]` is reserved
+and rejected at publish (§10.1), and there is no `[[id@vN]]`. Two options:
+- **Today:** a manifest's outline is a list of plain markdown links to pinned version pages,
+  `- [Chapter 1](/t/{id}/v3/)`. They work now, with no studio or spec change.
+- **Later:** a versioned link form in the grammar. That is a protocol decision (⚠️ FABLE + Venkat,
+  in blygger-spec), not a blykker or studio one. Propose it only if the markdown form proves inadequate.
+
+**Navigation inside an edition is also unsolved.** Pinned versions carry their baked nav, which links to the live
+version (see *The TOC is the source of truth for order*), so "Next →" inside a stable edition jumps to the
+bleeding edge. This needs presentation-level nav (phase 2) or edition-aware rendering. Until then, an edition
+is a citable, readable set of snapshots, but not something to read page to page.
+
+### Word-count extension v2: counts for pinned versions
+
+v1 is blygger-studio PR #117: published and draft counts for each reading entry, rolled up over
+its outline tree. v2 adds counts for **pinned versions**, so an edition has a word count that never changes.
+
+- **Counting:**
+  - **Versions are immutable,** so a pinned version's count is a pure function of stored bytes. Computing it
+    on demand from `versions.content_html` gives the same answer every time.
+  - **"Saving" a count** therefore means recording it, not caching it for correctness:
+    1. **In the edition manifest.** blykker writes the counts into the manifest's colophon at cut time, through
+       the owner API. That is the author's own content, so it may be public. **Do this first.** It needs no studio change.
+    2. **Computed on demand by the extension.** A new owner read, e.g. `GET /api/ext/word-count/edition?id=&v=`, walks a
+       pinned manifest's outline. The outline parser learns a second link form: a list item that is only a link to a
+       version page of one of our items, `[label](…/t/{id}/vN/)` or `…/f/{id}/vN/`. That gives (id, version) edges. The
+       strict-tree rules and the reasons for no total stay as in v1.
+    3. **A stored cache table.** Only if on-demand counting is measured to be too slow. Extension server halves are
+       read-only and cannot add migrations, so this would be a core hook proposed upstream, and it does not clear
+       the bar today.
+- **Reporting:** for each edition, the stable total beside the bleeding-edge published total and the draft total, with the two gaps:
+  - drafting ahead of published (v1 already has the data);
+  - published ahead of the newest stable edition (needs v2).
+  
+  This feeds the project dashboard (phase 3) and the composition start page (phase 1).
+- **Older editions** come free: any manifest version can be counted, and the counts never change.
+- **Wire:** no change. Counts stay Studio furniture, except where the author writes them into a manifest's colophon as content.
+
+## Several books on one blyg (planned 2026-11-04, not built)
+
+A blyg may host several related books on one theme, as the Publishing tree already has series
+(`Configurancy/`, 4 volumes; `artofgig/`, 3). New Nature is the first such blyg. Plan for many books
+now, and build for one until the second one is real.
+
+### Two levels of config
+
+Today `book.json` mixes settings for the whole blyg with settings for the one book. When a second
+book exists, split it:
+
+| Level | File (sketch) | Holds |
+|---|---|---|
+| Blyg (the shelf) | `blyg.json`-adjacent config, e.g. `shelf.json` | blyg URL, password source, studio settings (theme, font, title, author), both menus, the front page, shared hoppers, the list of books |
+| Book project | one `book.json` per book | slug, title, subtitle, author, sections and their ids, notes mode, references, index terms, editions, the book's own hoppers |
+
+**Compatibility:** a lone `book.json` keeps working as "a shelf with one book", and nothing changes for New Nature
+until a second book arrives. Section keys are namespaced by book slug (`newnature/ch1`) wherever they leave the book's file.
+
+### The book project: the unit blykker creates
+
+A **book project** is everything one book needs on a blyg, created in one step and then kept in step by `sync`. It is
+blykker's main abstraction: a shelf is a blyg with one or more book projects. Today's `seed` is that step for a
+blyg with exactly one book; it generalizes to:
+
+`blykker.py new-book <slug> --title "…"` (sketch), which:
+1. **Config.** Writes the book's `book.json` from `book.template.json` (title, subtitle, author, notes mode), and adds
+   the book to the shelf's list of books.
+2. **Section threads.** Creates the scaffold: cover, title page, Contents, preface, chapter 1, references and index,
+   with the invisible nav markers, then writes their ids back into the config. They are published, as `seed` does now,
+   because the Contents and shelf outlines link to them and a link to a draft will not publish.
+3. **Staging hopper.** Creates `<slug>-manuscript` (private).
+4. **Shelf entry.** Adds the book to the shelf thread's outline, so it gets a reading chain, nav blocks and a word-count
+   roll-up on the next `sync`.
+5. **Local folder.** Creates `<shelf project>/books/<slug>/` with a `status.md`, so the Publishing Dashboard tracks
+   the book (and later a `vgr-books/registry.json` entry at beta).
+
+What a book project does not own: the theme, the menus, the front page, the `notebook` and `meta` hoppers, and the
+image register. Those belong to the shelf and are shared by every book on it.
+
+The reverse operation, retiring a book, is deliberately left out of the plan for now. Withdrawal is public and
+permanent per item, so it needs its own design.
+
+### What changes when there are several books
+
+- **Front page.** The front page becomes a **shelf** thread, not one book's cover. The shelf is an outline: a list of
+  links to each book's cover or Contents. Each book keeps its own cover thread.
+- **Word counts.** These work unchanged. The shelf's outline links to each book's Contents, so the word-count extension
+  rolls up the whole shelf, and each book's Contents rolls up that book. A section shared by two books makes the
+  shelf's tree repeat an item, so the shelf gets no total and each book still gets its own. That is the conservative rule
+  doing its job.
+- **Menus.** The studio's two menus are blyg-wide, so they hold shelf links (Library, About, Meta), not one book's
+  "Start reading". A book's own links live in its cover, its Contents and its nav blocks.
+- **Navigation.** Each book has its own reading chain (cover → title → Contents → sections). The nav line gains a
+  link back to the shelf. Chains never cross books.
+- **Notes, references and the index** are per book: endnote numbering, the References thread and the index all
+  belong to the book.
+  - **Reference fragments may be shared.** Two books' References threads can transclude the same fragment, and that is
+    fine, because transclusions are not followed in roll-ups.
+  - **A combined index across the shelf is a later option.**
+- **Editions** are per book (see *Editions*).
+- **Images:** one register per blyg (`images/index.json`), whose "where used" names book and section.
+- **Project layout:** the blyg's project folder becomes the shelf, with one subfolder per book, each with its own
+  `status.md` for the Publishing Dashboard and, at beta, its own `vgr-books/registry.json` entry, as series do today.
+  Do not move anything until the second book exists.
+
+### Hoppers: shelf-wide working material, per-book staging
+
+A hopper is an unordered set of items, public or private. It can hold your own drafts and other people's posts.
+**A hopper does not make anything private:** publishing puts an item in the main feed whatever hopper it is in,
+and only a draft stays private.
+
+| Hopper | Scope | Visibility | Holds |
+|---|---|---|---|
+| `notebook` | shelf | private | Notes to self, mostly unpublished drafts, plus other people's posts kept as raw material. One notebook serves every book, because material on a shared theme rarely knows which book it is for. Named `notebook`, not `notes`, because blykker's "notes" are endnotes. |
+| `meta` | shelf | public | Published posts about the project: a making-of stream with its own page (`/h/meta/`) and, if hopper feeds are on, its own RSS feed |
+| `<slug>-manuscript` | one per book | private | Material going into that book but not yet placed in its Contents. A staging area, not a copy of the Contents: the Contents outline remains the only source of a book's structure and order, so the hopper cannot drift from it. |
+
+**Flow:** notebook (maybe) → `<slug>-manuscript` (yes, for this book, not yet placed) → the book's Contents (placed).
+An item can sit in more than one hopper, so a note can be staged for two books at once.
+
+**Planned tool support:**
+- `seed` creates the hoppers from config.
+- `sync` reports staged items missing from the Contents, and Contents sections missing from staging.
+- A `promote` command (later, a Studio ⋯ action) moves an item one stage along.
+- The word-count extension could total each hopper for the dashboard: notebook, staged, placed.
+
+**Known friction:** a draft note cannot be quoted (`![[id]]`) or linked into a chapter. Drafts do not resolve, and
+publishing a note puts it in the public feed. So a note reaches the manuscript by being published or by being copied
+into a chapter. The planned tangling feature may be the real answer; log it as friction until then. Published notes
+and meta posts also crowd the home page; that is the existing home-page-order hook.
+
+### Decisions (Venkat)
+
+- **Name — decided 2026-11-04 (Venkat):** "New Nature" is **both the shelf and its first volume**, the way a class of
+  ships is named for its first ship. A later volume might be *The New Nature of Computing*. Consequences:
+  - The blyg (`newnature.venkateshrao.com`) is the shelf, and its site title "New Nature" names the shelf.
+  - Volume 1 keeps the title *New Nature*, and its book slug is `newnature`. Book slugs only need to be unique among
+    the shelf's books; the shelf itself needs no slug, since it is the blyg and the project folder. A second volume
+    would get a short slug of its own, such as `computing`.
+  - Until a second volume exists nothing moves: the front page stays volume 1's cover. When one arrives, the front page
+    becomes the shelf thread, and volume 1's title page may gain a series line ("New Nature, volume 1").
+- **Notebook — decided 2026-11-04:** private drafts by default. A note is published only when it is meant to be public.
+- **Manuscript hoppers — decided 2026-11-04:** staging only. A `<slug>-manuscript` hopper holds material for that book
+  that is not yet placed. It is never a mirror of the book's sections, and the Contents outline stays the only source of
+  structure and order.
+- **Pending upstream (Venkat, 2026-11-04):** a studio feature that properly distinguishes *private* from *draft* status.
+  When it lands, revisit the notebook design and the friction above (a draft note can't be quoted or linked into a
+  chapter without being published to the feed). A private-but-resolvable state may remove that friction, and may change
+  what "private drafts by default" means for the notebook.
 
 ## Upstream hooks (PRs to blygger-studio)
 

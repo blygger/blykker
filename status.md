@@ -3,7 +3,9 @@
 **State:** config stage — a configuration-first mod of blygger-studio (not a client; reframed 2026-11-02). See PLAN.md.
 
 ## Active / Open
-- Phase 1 backlog in PLAN.md: notes assembly, image checks, sync safety, trigger.
+- ⚠️ **Sync safety bug (2026-11-04):** `sync` publishes a published thread whenever it changes the text, even if the working copy holds unpublished author edits. Live case: the New Nature Preface's draft paragraph would be published to strip one trailing space. Fix before the next real sync.
+- Phase 1 backlog in PLAN.md: sync safety (above), trigger, manuscript statistics, composition page.
+- Planned: *Editions* and *Several books on one blyg* (book projects, hoppers), both in PLAN.md.
 
 ## Log
 - 2026-11-02 — Created: local repo (GitHub `blygger/blykker`, public), MIT, README, CLAUDE.md. Linked to `Publishing/newnature` (first user) and its blyg at newnature.venkateshrao.com, which runs vanilla blygger-studio 0.50.0 for now.
@@ -13,3 +15,4 @@
 - 2026-11-02 — Reframed (Venkat): blykker is a configuration-first mod of blygger-studio, not an independent client; features as mods, missing surfaces proposed as studio PRs; first test case for a mods model. README, PLAN (new *Upstream hooks* table), CLAUDE.md updated.
 - 2026-11-02 — `book.template.json`: user starting point (studio release + install links, ordered setup steps, New Nature-style config with CHANGE-ME placeholders). Seed tested end to end on a fake node (publish order, menus, cover link, idempotent re-sync). Tool refuses configs with CHANGE-ME left. README Quick start added.
 - 2026-11-02 19:14 PST — Session 1 closed (logged in `Publishing/newnature/DEVLOG.md`). blykker is run from newnature's sessions until it is managed on its own.
+- 2026-11-04 — PLAN.md: *Editions* (stable / bleeding edge / older, word-count v2 for pinned versions) and *Several books on one blyg* (shelf, book projects, hoppers, decisions). Word-count extension submitted upstream as blygger-studio PR #117. Sync safety bug found (above). Logged in `Publishing/newnature/DEVLOG.md` session 2.

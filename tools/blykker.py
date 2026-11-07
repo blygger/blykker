@@ -9,7 +9,9 @@ editor would: it edits threads and settings and never touches studio code.
   blykker.py BOOK.json sync       from the TOC thread: rewrite nav blocks, the
                                   menu, settings, notes, references and index;
                                   retarget the cover's "Start reading"; check image
-                                  records; publish threads that were published and changed
+                                  records; publish threads that were published and changed,
+                                  unless they have unpublished author edits (those only
+                                  get their working copy updated)
   blykker.py BOOK.json sync --dry-run   report what sync would change
 
 Auth: the owner password, read from the file and variable named in BOOK.json
@@ -92,6 +94,11 @@ class Blyg:
         if publish:
             return self.api("POST", f"/items/{item['id']}/publish", {"note": note, "expectedRevision": rev})
         return {**item, "revision": rev, "contentMd": text}
+
+
+def live_text(item: dict) -> str:
+    """The text readers see: the published version when the working copy has unpublished edits."""
+    return item["published"]["contentMd"] if item["dirty"] and item["published"] else item["contentMd"]
 
 
 def load_book(path: Path):
@@ -273,17 +280,18 @@ def sync(path: Path, book: dict, blyg, dry: bool) -> None:
     # The chain: cover → title → toc → TOC entries.
     chain = [(s["id"], s["title"]) for r in ("cover", "title") if (s := by_role.get(r)) and s.get("id")]
     chain.append((toc["id"], toc["title"]))
-    chain += [e for e in toc_entries(get(toc["id"])["contentMd"]) if e[0] not in {c[0] for c in chain}]
+    chain += [e for e in toc_entries(live_text(get(toc["id"]))) if e[0] not in {c[0] for c in chain}]
     toc_ref = (toc["id"], toc["title"])
     titles = dict(chain)
     print("chain: " + " → ".join(t for _, t in chain))
 
     planned = {}  # id -> new text
-    # Assembled sections first, from the author text of every chain thread.
+    # Assembled sections first, from the live author text of every chain thread:
+    # unpublished edits must not reach readers through the index or references.
     found = {}
     cited = []
     for id, title in chain:
-        text = strip_nav(get(id)["contentMd"])
+        text = strip_nav(live_text(get(id)))
         for term in index_terms(text):
             found.setdefault(term, [])
             if (id, title) not in found[term]:
@@ -301,7 +309,7 @@ def sync(path: Path, book: dict, blyg, dry: bool) -> None:
         new = with_chapter_notes(text, is_note, book.get("notes", "chapter") == "chapter")
         if new != strip_nav(text):
             planned[id] = new
-        if notes := notes_cited(strip_nav(text).split(NOTES_AT, 1)[0], is_note):
+        if notes := notes_cited(strip_nav(live_text(get(id))).split(NOTES_AT, 1)[0], is_note):
             book_notes.append((title, notes))
         # Image records: report what print production will need.
         for m in DIRECTIVE.finditer(strip_nav(text)):
@@ -339,9 +347,13 @@ def sync(path: Path, book: dict, blyg, dry: bool) -> None:
 
     for id, text in planned.items():
         item = get(id)
+        # Publishing sends the whole working copy, so never publish over author edits.
+        held = item["status"] == "public" and item["dirty"]
+        if held:
+            print(f"{titles.get(id, id)}: has unpublished edits; readers get its generated changes when you publish it")
         if text == item["contentMd"]:
             continue
-        publish = item["status"] == "public"
+        publish = item["status"] == "public" and not held
         print(f"{titles.get(id, id)}: {'update + publish' if publish else 'update draft'}")
         if not dry:
             blyg.write(item, text, publish, NAV_NOTE)

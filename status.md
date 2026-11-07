@@ -3,8 +3,7 @@
 **State:** config stage — a configuration-first mod of blygger-studio (not a client; reframed 2026-11-02). See PLAN.md.
 
 ## Active / Open
-- ⚠️ **Sync safety bug (2026-11-04):** `sync` publishes a published thread whenever it changes the text, even if the working copy holds unpublished author edits. Live case: the New Nature Preface's draft paragraph would be published to strip one trailing space. Fix before the next real sync.
-- Phase 1 backlog in PLAN.md: sync safety (above), trigger, manuscript statistics, composition page.
+- Phase 1 backlog in PLAN.md: trigger, manuscript statistics, composition page. The New Nature dashboard prototype (`Publishing/newnature/mods/book-dashboard/`) is the candidate for trigger and composition, to generalize here after testing.
 - Planned: *Editions* and *Several books on one blyg* (book projects, hoppers), both in PLAN.md.
 
 ## Log
@@ -15,4 +14,5 @@
 - 2026-11-02 — Reframed (Venkat): blykker is a configuration-first mod of blygger-studio, not an independent client; features as mods, missing surfaces proposed as studio PRs; first test case for a mods model. README, PLAN (new *Upstream hooks* table), CLAUDE.md updated.
 - 2026-11-02 — `book.template.json`: user starting point (studio release + install links, ordered setup steps, New Nature-style config with CHANGE-ME placeholders). Seed tested end to end on a fake node (publish order, menus, cover link, idempotent re-sync). Tool refuses configs with CHANGE-ME left. README Quick start added.
 - 2026-11-02 19:14 PST — Session 1 closed (logged in `Publishing/newnature/DEVLOG.md`). blykker is run from newnature's sessions until it is managed on its own.
-- 2026-11-04 — PLAN.md: *Editions* (stable / bleeding edge / older, word-count v2 for pinned versions) and *Several books on one blyg* (shelf, book projects, hoppers, decisions). Word-count extension submitted upstream as blygger-studio PR #117. Sync safety bug found (above). Logged in `Publishing/newnature/DEVLOG.md` session 2.
+- 2026-11-04 — PLAN.md: *Editions* (stable / bleeding edge / older, word-count v2 for pinned versions) and *Several books on one blyg* (shelf, book projects, hoppers, decisions). Word-count extension submitted upstream as blygger-studio PR #117. Sync safety bug found. Logged in `Publishing/newnature/DEVLOG.md` session 2.
+- 2026-11-06 — Sync safety bug fixed (`4b6d324`). Build process set: prototype on New Nature first, generalize here later. Logged in `Publishing/newnature/DEVLOG.md` session 3.

@@ -65,7 +65,8 @@ of feed apparatus are accepted in their general forms (an owner stylesheet or pa
 setting; a setting; presentation); the `feed.xml` filter is **refused** (§7: one event per published
 item) — keep notes and references off the home page through the feed-order slot instead, and leave
 burying to readers (§13.7); the server hook on publish is **refused** — rebuild from a tool on a
-scoped token polling `/api/changes`, which is what `tools/blykker.py` already is.
+scoped token polling the resources (conditional GETs; `/api/changes` is deprecated
+from studio 0.65.0 and removed in 0.67.0, decision #111), which is what `tools/blykker.py` already is.
 
 **Run from `Publishing/newnature/` for now** (Venkat, 2026-11-02). blykker is controlled from its pilot
 book's sessions, which run the full base ritual for both repos and keep one devlog

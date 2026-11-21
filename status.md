@@ -5,6 +5,7 @@
 ## Active / Open
 - Phase 1 backlog in PLAN.md: trigger, manuscript statistics, composition page. The New Nature dashboard prototype (`Publishing/newnature/mods/book-dashboard/`) is the candidate for trigger and composition, to generalize here after testing.
 - Planned: *Editions* and *Several books on one blyg* (book projects, hoppers), both in PLAN.md.
+- 2026-11-20 — Prototypes on New Nature waiting to generalize here: nav regions (fixed: claim only the rebuild's separator), menu zone, +REF, writing sessions (Writing log hopper). Studio PRs they will build on: #154 editor bars, #156 dictionary, #159 editor marks, #155 spellcheck; design studio#163 (editorial desk) and spec#36 (edit provenance). Session log: `Publishing/newnature/DEVLOG.md` session 6.
 
 ## Log
 - 2026-11-02 — Created: local repo (GitHub `blygger/blykker`, public), MIT, README, CLAUDE.md. Linked to `Publishing/newnature` (first user) and its blyg at newnature.venkateshrao.com, which runs vanilla blygger-studio 0.50.0 for now.
